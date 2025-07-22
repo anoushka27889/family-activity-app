@@ -1,16 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { MapPin, Clock, Star, Settings, ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, Clock, Star, Settings } from 'lucide-react';
 
-const FamilyActivityApp = () => {
-  const [currentScreen, setCurrentScreen] = useState('main');
-  const [selectedLocation, setSelectedLocation] = useState('Berkeley');
-  const [selectedDuration, setSelectedDuration] = useState('2 hrs');
-  const [selectedFilters, setSelectedFilters] = useState([]);
-  const [interests, setInterests] = useState([]);
-  const [activities, setActivities] = useState([]);
+interface Activity {
+  id: number;
+  title: string;
+  description: string;
+  duration: string;
+  tags: string[];
+  rating: number;
+  category: string;
+}
+
+const FamilyActivityApp: React.FC = () => {
+  const [currentScreen, setCurrentScreen] = useState<string>('main');
+  const [selectedLocation, setSelectedLocation] = useState<string>('Berkeley');
+  const [selectedDuration, setSelectedDuration] = useState<string>('2 hrs');
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [interests, setInterests] = useState<string[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
 
   // Sample activities data
-  const sampleActivities = [
+  const sampleActivities: Activity[] = [
     {
       id: 1,
       title: "Corner Store Adventure",
@@ -40,17 +50,17 @@ const FamilyActivityApp = () => {
     }
   ];
 
-  const filterOptions = [
+  const filterOptions: string[] = [
     'OUTDOOR', 'INDOOR', 'LOW ENERGY', 'HIGH ENERGY', 
     'CALMING', 'FREE', 'UNDER $20', '$20+'
   ];
 
-  const interestCategories = [
+  const interestCategories: string[] = [
     'Playgrounds', 'Music & Dance', 'Animals & Nature', 'Water Play',
     'Sensory Play', 'Learning & Books', 'Social & Playgroups'
   ];
 
-  const toggleFilter = (filter) => {
+  const toggleFilter = (filter: string): void => {
     setSelectedFilters(prev => 
       prev.includes(filter) 
         ? prev.filter(f => f !== filter)
@@ -58,7 +68,7 @@ const FamilyActivityApp = () => {
     );
   };
 
-  const toggleInterest = (interest) => {
+  const toggleInterest = (interest: string): void => {
     setInterests(prev => 
       prev.includes(interest) 
         ? prev.filter(i => i !== interest)
@@ -66,7 +76,7 @@ const FamilyActivityApp = () => {
     );
   };
 
-  const handleSearch = () => {
+  const handleSearch = (): void => {
     // Filter activities based on selected criteria
     let filtered = sampleActivities;
     
@@ -85,7 +95,7 @@ const FamilyActivityApp = () => {
   };
 
   // Main Search Screen
-  const MainScreen = () => (
+  const MainScreen: React.FC = () => (
     <div className="min-h-screen bg-white p-4 max-w-sm mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
@@ -164,7 +174,7 @@ const FamilyActivityApp = () => {
   );
 
   // Results Screen
-  const ResultsScreen = () => (
+  const ResultsScreen: React.FC = () => (
     <div className="min-h-screen bg-white p-4 max-w-sm mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
@@ -243,7 +253,7 @@ const FamilyActivityApp = () => {
   );
 
   // Interests Screen
-  const InterestsScreen = () => (
+  const InterestsScreen: React.FC = () => (
     <div className="min-h-screen bg-green-500 p-4 max-w-sm mx-auto text-white">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
@@ -295,7 +305,7 @@ const FamilyActivityApp = () => {
   );
 
   // Location Selector Screen
-  const LocationScreen = () => (
+  const LocationScreen: React.FC = () => (
     <div className="min-h-screen bg-white p-4 max-w-sm mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div className="text-blue-600 font-bold text-lg">TOT TROT</div>
@@ -326,7 +336,7 @@ const FamilyActivityApp = () => {
   );
 
   // Duration Selector Screen  
-  const DurationScreen = () => (
+  const DurationScreen: React.FC = () => (
     <div className="min-h-screen bg-white p-4 max-w-sm mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div className="text-blue-600 font-bold text-lg">TOT TROT</div>
@@ -357,7 +367,7 @@ const FamilyActivityApp = () => {
   );
 
   // Render current screen
-  const renderScreen = () => {
+  const renderScreen = (): JSX.Element => {
     switch (currentScreen) {
       case 'results':
         return <ResultsScreen />;
