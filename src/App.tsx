@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { MapPin, Clock, Star, Settings } from 'lucide-react';
 
 interface Activity {
   id: number;
@@ -10,7 +11,7 @@ interface Activity {
   category: string;
 }
 
-const FamilyActivityApp = () => {
+const FamilyActivityApp: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<string>('main');
   const [selectedLocation, setSelectedLocation] = useState<string>('Berkeley');
   const [selectedDuration, setSelectedDuration] = useState<string>('2 hrs');
@@ -59,7 +60,7 @@ const FamilyActivityApp = () => {
     'Sensory Play', 'Learning & Books', 'Social & Playgroups'
   ];
 
-  const toggleFilter = (filter: string) => {
+  const toggleFilter = (filter: string): void => {
     setSelectedFilters(prev => 
       prev.includes(filter) 
         ? prev.filter(f => f !== filter)
@@ -67,7 +68,7 @@ const FamilyActivityApp = () => {
     );
   };
 
-  const toggleInterest = (interest: string) => {
+  const toggleInterest = (interest: string): void => {
     setInterests(prev => 
       prev.includes(interest) 
         ? prev.filter(i => i !== interest)
@@ -75,7 +76,8 @@ const FamilyActivityApp = () => {
     );
   };
 
-  const handleSearch = () => {
+  const handleSearch = (): void => {
+    // Filter activities based on selected criteria
     let filtered = sampleActivities;
     
     if (selectedFilters.includes('OUTDOOR')) {
@@ -93,19 +95,19 @@ const FamilyActivityApp = () => {
   };
 
   // Main Search Screen
-  const MainScreen = () => (
+  const MainScreen: React.FC = () => (
     <div className="min-h-screen bg-white p-4 max-w-sm mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="text-blue-600 font-bold text-lg">TOT TROT</div>
-        <div className="w-6 h-6 text-gray-600">⚙️</div>
+        <Settings className="w-6 h-6 text-gray-600" />
       </div>
 
       {/* Location Selector */}
       <div className="mb-4">
         <div className="bg-blue-500 text-white px-6 py-3 rounded-full flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span>📍</span>
+            <MapPin className="w-4 h-4" />
             <span className="font-medium">{selectedLocation}</span>
           </div>
           <button 
@@ -121,7 +123,7 @@ const FamilyActivityApp = () => {
       <div className="mb-6">
         <div className="bg-red-500 text-white px-6 py-3 rounded-full flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span>🕐</span>
+            <Clock className="w-4 h-4" />
             <span className="font-medium">{selectedDuration}</span>
           </div>
           <button 
@@ -172,17 +174,17 @@ const FamilyActivityApp = () => {
   );
 
   // Results Screen
-  const ResultsScreen = () => (
+  const ResultsScreen: React.FC = () => (
     <div className="min-h-screen bg-white p-4 max-w-sm mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-4">
           <div className="bg-blue-500 text-white px-4 py-2 rounded-full flex items-center gap-2">
-            <span>📍</span>
+            <MapPin className="w-4 h-4" />
             <span>San Francisco</span>
           </div>
           <div className="bg-red-500 text-white px-4 py-2 rounded-full flex items-center gap-2">
-            <span>🕐</span>
+            <Clock className="w-4 h-4" />
             <span>2 hrs</span>
           </div>
         </div>
@@ -209,7 +211,7 @@ const FamilyActivityApp = () => {
             <div className="flex justify-between items-start mb-2">
               <h3 className="font-bold text-black text-lg">{activity.title}</h3>
               <button className="bg-black text-yellow-400 p-2 rounded-full">
-                ⭐
+                <Star className="w-4 h-4" />
               </button>
             </div>
             
@@ -226,7 +228,15 @@ const FamilyActivityApp = () => {
             </div>
             
             <div className="flex items-center gap-1">
-              <span className="text-black text-sm">Perfect for: ⭐⭐⭐⭐⭐</span>
+              <span className="text-black text-sm">Perfect for:</span>
+              <div className="flex">
+                {[...Array(5)].map((_, i) => (
+                  <Star 
+                    key={i} 
+                    className={`w-3 h-3 ${i < Math.floor(activity.rating) ? 'fill-black text-black' : 'text-gray-400'}`} 
+                  />
+                ))}
+              </div>
             </div>
           </div>
         ))}
@@ -243,7 +253,7 @@ const FamilyActivityApp = () => {
   );
 
   // Interests Screen
-  const InterestsScreen = () => (
+  const InterestsScreen: React.FC = () => (
     <div className="min-h-screen bg-green-500 p-4 max-w-sm mx-auto text-white">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
@@ -295,11 +305,11 @@ const FamilyActivityApp = () => {
   );
 
   // Location Selector Screen
-  const LocationScreen = () => (
+  const LocationScreen: React.FC = () => (
     <div className="min-h-screen bg-white p-4 max-w-sm mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div className="text-blue-600 font-bold text-lg">TOT TROT</div>
-        <span>⚙️</span>
+        <Settings className="w-6 h-6 text-gray-600" />
       </div>
 
       <h2 className="text-xl font-bold mb-4">Select Location</h2>
@@ -326,11 +336,11 @@ const FamilyActivityApp = () => {
   );
 
   // Duration Selector Screen  
-  const DurationScreen = () => (
+  const DurationScreen: React.FC = () => (
     <div className="min-h-screen bg-white p-4 max-w-sm mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div className="text-blue-600 font-bold text-lg">TOT TROT</div>
-        <span>⚙️</span>
+        <Settings className="w-6 h-6 text-gray-600" />
       </div>
 
       <h2 className="text-xl font-bold mb-4">How long do you have?</h2>
@@ -357,7 +367,7 @@ const FamilyActivityApp = () => {
   );
 
   // Render current screen
-  const renderScreen = () => {
+  const renderScreen = (): JSX.Element => {
     switch (currentScreen) {
       case 'results':
         return <ResultsScreen />;
