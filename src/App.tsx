@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Activity {
   id: string;
@@ -15,6 +15,12 @@ interface Activity {
   review_count?: number;
   is_open_now: boolean;
   source: string;
+}
+
+interface DurationOption {
+  value: string;
+  label: string;
+  description: string;
 }
 
 function App() {
@@ -38,7 +44,7 @@ function App() {
 
   const cityOptions: string[] = ['Berkeley', 'San Francisco', 'Oakland', 'San Jose', 'Palo Alto'];
   
-  const durationOptions = [
+  const durationOptions: DurationOption[] = [
     { value: '30 min', label: '30 min', description: 'Perfect for a quick visit' },
     { value: '1 hr', label: '1 hr', description: 'Great for focused activities' },
     { value: '2 hrs', label: '2 hrs', description: 'Explore at a comfortable pace' },
@@ -47,7 +53,7 @@ function App() {
   ];
 
   useEffect(() => {
-    setFavorites(['sample_1', 'sample_2']);
+    setFavorites([]);
   }, []);
 
   const handleSearch = async (): Promise<void> => {
@@ -126,8 +132,8 @@ function App() {
     return activity.cost_category;
   };
 
-  // Simple Activity Card for Real Data
-  const ActivityCard = ({ activity }: { activity: Activity }) => {
+  // Simple Activity Card Component
+  const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
     const isFavorite = favorites.includes(activity.id);
     
     return (
@@ -227,7 +233,7 @@ function App() {
         </div>
         
         <div className="space-y-4">
-          {durationOptions.map((option) => (
+          {durationOptions.map((option: DurationOption) => (
             <button
               key={option.value}
               onClick={() => {
@@ -366,102 +372,101 @@ function App() {
             <span className="text-lg font-semibold">{selectedDuration}</span>
           </div>
           <button 
-            className="text-sm bg-red-400 px-4 py-2
+            className="text-sm bg-red-400 px-4 py-2 rounded-full hover:bg-red-300 transition-colors font-medium"
+            onClick={() => setCurrentScreen('duration')}
+          >
+            CHANGE
+          </button>
+        </div>
+      </div>
 
-      onClick={() => setCurrentScreen('duration')}
-         >
-           CHANGE
-         </button>
-       </div>
-     </div>
+      <div className="bg-yellow-400 p-6 rounded-3xl mb-8">
+        <div className="text-black font-bold text-2xl mb-6">Find something</div>
+        
+        <div className="mb-6">
+          <input
+            type="text"
+            value={moodQuery}
+            onChange={(e) => setMoodQuery(e.target.value)}
+            placeholder="What are you looking for? (parks, museums, playgrounds...)"
+            className="w-full p-3 rounded-lg border-0 bg-white text-gray-800 placeholder-gray-500"
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          {moodQuery && (
+            <button
+              onClick={() => setMoodQuery('')}
+              className="mt-2 text-black text-xs hover:text-gray-600"
+            >
+              Clear search
+            </button>
+          )}
+        </div>
+        
+        <div className="flex flex-wrap gap-3 mb-6">
+          {filterOptions.map((filter: string) => (
+            <button
+              key={filter}
+              onClick={() => toggleFilter(filter)}
+              className={`px-5 py-3 rounded-full text-sm font-bold border-2 border-black transition-all ${
+                selectedFilters.includes(filter)
+                  ? 'bg-black text-yellow-400'
+                  : 'bg-transparent text-black hover:bg-black hover:text-yellow-400'
+              }`}
+            >
+              {filter}
+            </button>
+          ))}
+        </div>
 
-     <div className="bg-yellow-400 p-6 rounded-3xl mb-8">
-       <div className="text-black font-bold text-2xl mb-6">Find something</div>
-       
-       <div className="mb-6">
-         <input
-           type="text"
-           value={moodQuery}
-           onChange={(e) => setMoodQuery(e.target.value)}
-           placeholder="What are you looking for? (parks, museums, playgrounds...)"
-           className="w-full p-3 rounded-lg border-0 bg-white text-gray-800 placeholder-gray-500"
-           onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-         />
-         {moodQuery && (
-           <button
-             onClick={() => setMoodQuery('')}
-             className="mt-2 text-black text-xs hover:text-gray-600"
-           >
-             Clear search
-           </button>
-         )}
-       </div>
-       
-       <div className="flex flex-wrap gap-3 mb-6">
-         {filterOptions.map((filter: string) => (
-           <button
-             key={filter}
-             onClick={() => toggleFilter(filter)}
-             className={`px-5 py-3 rounded-full text-sm font-bold border-2 border-black transition-all ${
-               selectedFilters.includes(filter)
-                 ? 'bg-black text-yellow-400'
-                 : 'bg-transparent text-black hover:bg-black hover:text-yellow-400'
-             }`}
-           >
-             {filter}
-           </button>
-         ))}
-       </div>
+        {selectedFilters.length > 0 && (
+          <div className="text-center mb-4">
+            <span className="text-black text-sm font-medium">
+              {selectedFilters.length} filter{selectedFilters.length > 1 ? 's' : ''} selected
+            </span>
+          </div>
+        )}
+      </div>
 
-       {selectedFilters.length > 0 && (
-         <div className="text-center mb-4">
-           <span className="text-black text-sm font-medium">
-             {selectedFilters.length} filter{selectedFilters.length > 1 ? 's' : ''} selected
-           </span>
-         </div>
-       )}
-     </div>
+      <button
+        onClick={handleSearch}
+        disabled={loading}
+        className={`w-full py-5 rounded-full text-2xl font-bold transition-all ${
+          loading 
+            ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+            : 'bg-black text-white hover:bg-gray-800 active:bg-gray-900'
+        }`}
+      >
+        {loading ? 'Searching...' : 'Go'}
+      </button>
 
-     <button
-       onClick={handleSearch}
-       disabled={loading}
-       className={`w-full py-5 rounded-full text-2xl font-bold transition-all ${
-         loading 
-           ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
-           : 'bg-black text-white hover:bg-gray-800 active:bg-gray-900'
-       }`}
-     >
-       {loading ? 'Searching...' : 'Go'}
-     </button>
+      <div className="mt-8 grid grid-cols-2 gap-4">
+        <button 
+          onClick={() => {
+            setSelectedFilters(['HAPPENING NOW']);
+            handleSearch();
+          }}
+          className="bg-green-500 text-white py-4 rounded-2xl text-sm font-bold hover:bg-green-600 transition-colors"
+        >
+          🔴 Live Events
+        </button>
+        <button 
+          onClick={() => {
+            setSelectedFilters(['FREE']);
+            handleSearch();
+          }}
+          className="bg-blue-500 text-white py-4 rounded-2xl text-sm font-bold hover:bg-blue-600 transition-colors"
+        >
+          💰 Free Activities
+        </button>
+      </div>
 
-     <div className="mt-8 grid grid-cols-2 gap-4">
-       <button 
-         onClick={() => {
-           setSelectedFilters(['HAPPENING NOW']);
-           handleSearch();
-         }}
-         className="bg-green-500 text-white py-4 rounded-2xl text-sm font-bold hover:bg-green-600 transition-colors"
-       >
-         🔴 Live Events
-       </button>
-       <button 
-         onClick={() => {
-           setSelectedFilters(['FREE']);
-           handleSearch();
-         }}
-         className="bg-blue-500 text-white py-4 rounded-2xl text-sm font-bold hover:bg-blue-600 transition-colors"
-       >
-         💰 Free Activities
-       </button>
-     </div>
-
-     <div className="mt-8 text-center">
-       <div className="text-xs text-gray-400">
-         Real activity data • {cityOptions.length} cities • {new Date().toLocaleDateString()}
-       </div>
-     </div>
-   </div>
- );
+      <div className="mt-8 text-center">
+        <div className="text-xs text-gray-400">
+          Real activity data • {cityOptions.length} cities • {new Date().toLocaleDateString()}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default App;
